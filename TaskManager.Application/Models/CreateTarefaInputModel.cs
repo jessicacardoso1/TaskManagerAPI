@@ -10,8 +10,8 @@ namespace TaskManager.Application.Models
 {
     public class CreateTarefaInputModel
     {
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "Título é obrigatório.")]
+        [MaxLength(100, ErrorMessage = "Título não pode ter mais que 100 caracteres.")]
         public string Titulo { get; set; } = string.Empty;
         public string? Descricao { get; set; }
         public Tarefa ToEntity()
