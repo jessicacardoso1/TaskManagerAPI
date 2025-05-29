@@ -60,7 +60,7 @@ public class TarefasController : ControllerBase
     {
         var result = await _service.DeleteAsync(id);
 
-        if (!result.IsSuccess)
+            if (!result.IsSuccess)
             return NotFound(result);
 
         return NoContent();
