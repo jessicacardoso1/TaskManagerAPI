@@ -38,10 +38,10 @@ public class TarefasController : ControllerBase
     {
         var result = await _service.CreateAsync(input);
 
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = result.Data },
-            result);
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Data }, result);
     }
 
     [HttpPut("{id}")]
@@ -50,9 +50,14 @@ public class TarefasController : ControllerBase
         var result = await _service.UpdateAsync(id, input);
 
         if (!result.IsSuccess)
-            return NotFound(result);
+        {
+            if (result.Message == "Tarefa não encontrada.")
+                return NotFound(result);
 
-        return NoContent();
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
@@ -60,9 +65,9 @@ public class TarefasController : ControllerBase
     {
         var result = await _service.DeleteAsync(id);
 
-            if (!result.IsSuccess)
+        if (!result.IsSuccess)
             return NotFound(result);
 
-        return NoContent();
+        return Ok(result);
     }
 }
