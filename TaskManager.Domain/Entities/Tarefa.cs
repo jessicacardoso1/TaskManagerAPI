@@ -32,6 +32,10 @@ namespace TaskManager.Domain.Entities
 
             Titulo = titulo;
         }
+        public void SetDescricao(string? descricao)
+        {
+            Descricao = descricao;
+        }
 
         public void Concluir(DateTime dataConclusao)
         {
@@ -46,6 +50,30 @@ namespace TaskManager.Domain.Entities
         {
             Status = StatusTarefa.EmProgresso;
         }
+
+        public void Atualizar(string titulo, string? descricao, StatusTarefa status, DateTime? dataConclusao)
+        {
+            SetTitulo(titulo);
+            SetDescricao(descricao);
+
+            switch (status)
+            {
+                case StatusTarefa.Pendente:
+                    Status = StatusTarefa.Pendente;
+                    DataConclusao = null;
+                    break;
+
+                case StatusTarefa.EmProgresso:
+                    Iniciar();
+                    DataConclusao = null;
+                    break;
+
+                case StatusTarefa.Concluida:
+                    Concluir(dataConclusao ?? DateTime.Now);
+                    break;
+            }
+        }
+
     }
 
 }

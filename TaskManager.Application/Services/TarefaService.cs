@@ -58,17 +58,13 @@ namespace TaskManager.Application.Services
             if (tarefa == null)
                 return ResultViewModel.Error("Tarefa não encontrada.");
 
-            tarefa.SetTitulo(input.Titulo);
-
-            if (input.Status == StatusTarefa.EmProgresso)
-                tarefa.Iniciar();
-            else if (input.Status == StatusTarefa.Concluida)
-                tarefa.Concluir(input.DataConclusao ?? DateTime.Now);
+            tarefa.Atualizar(input.Titulo, input.Descricao, input.Status, input.DataConclusao);
 
             await _repository.UpdateAsync(tarefa);
 
             return ResultViewModel.Success("Tarefa atualizada com sucesso.");
         }
+
 
         public async Task<ResultViewModel> DeleteAsync(int id)
         {
