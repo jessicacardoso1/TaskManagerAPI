@@ -58,11 +58,21 @@ namespace TaskManager.Application.Services
             if (tarefa == null)
                 return ResultViewModel.Error("Tarefa não encontrada.");
 
-            tarefa.Atualizar(input.Titulo, input.Descricao, input.Status, input.DataConclusao);
+            if (!Enum.IsDefined(typeof(StatusTarefa), input.Status))
+                return ResultViewModel.Error("Status inválido.");
 
-            await _repository.UpdateAsync(tarefa);
+            try
+            {
+                tarefa.Atualizar(input.Titulo, input.Descricao, input.Status, input.DataConclusao);
 
-            return ResultViewModel.Success("Tarefa atualizada com sucesso.");
+                await _repository.UpdateAsync(tarefa);
+
+                return ResultViewModel.Success("Tarefa atualizada com sucesso.");
+            }
+            catch (ArgumentException ex)
+            {
+                return ResultViewModel.Error(ex.Message);
+            }
         }
 
 

@@ -40,7 +40,7 @@ namespace TaskManager.Domain.Entities
         public void Concluir(DateTime dataConclusao)
         {
             if (dataConclusao < DataCriacao)
-                throw new Exception("Data de conclusão não pode ser anterior à data de criação.");
+                throw new ArgumentException("Data de conclusão não pode ser anterior à data de criação.");
 
             DataConclusao = dataConclusao;
             Status = StatusTarefa.Concluida;
@@ -53,6 +53,8 @@ namespace TaskManager.Domain.Entities
 
         public void Atualizar(string titulo, string? descricao, StatusTarefa status, DateTime? dataConclusao)
         {
+            ValidateStatusTransition(status, dataConclusao);
+
             SetTitulo(titulo);
             SetDescricao(descricao);
 
@@ -72,6 +74,16 @@ namespace TaskManager.Domain.Entities
                     Concluir(dataConclusao ?? DateTime.Now);
                     break;
             }
+        }
+
+        private void ValidateStatusTransition(StatusTarefa status, DateTime? dataConclusao)
+        {
+            if (status == StatusTarefa.Concluida && !dataConclusao.HasValue)
+                throw new ArgumentException("A Data de conclusão é obrigatória para concluir a tarefa.");
+
+            if ((status == StatusTarefa.Pendente || status == StatusTarefa.EmProgresso) && dataConclusao != null)
+                throw new ArgumentException("Não é permitido informar data de conclusão se a tarefa não está concluída.");
+
         }
 
     }
