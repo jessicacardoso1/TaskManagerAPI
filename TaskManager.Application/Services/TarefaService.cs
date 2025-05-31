@@ -44,11 +44,20 @@ namespace TaskManager.Application.Services
 
         public async Task<ResultViewModel<int>> CreateAsync(CreateTarefaInputModel input)
         {
-            var tarefa = input.ToEntity();
 
-            var id = await _repository.CreateAsync(tarefa);
+            try
+            {
+                var tarefa = input.ToEntity();
+                var id = await _repository.CreateAsync(tarefa);
+                return ResultViewModel<int>.Success(id, "Tarefa criada com sucesso.");
 
-            return ResultViewModel<int>.Success(id, "Tarefa criada com sucesso.");
+            }
+            catch (ArgumentException ex)
+            {
+                return ResultViewModel<int>.Failure(ex.Message);
+
+            }
+
         }
 
         public async Task<ResultViewModel> UpdateAsync(int id, UpdateTarefaInputModel input)
